@@ -74,24 +74,36 @@ def get_assignments_for_class_internal(cls):
                 date_assigned = cells[1].get_text(strip=True)
                 assignment_name = cells[2].get_text(strip=True)
                 category = cells[3].get_text(strip=True)
-                score = cells[4].get_text(strip=True) if len(cells) > 4 else 'N/A'
                 
-                # Calculate percentage for the score if possible
+                # Get score details - HAC provides: score, total, weight, weighted_score, weighted_total, percentage
+                score = cells[4].get_text(strip=True) if len(cells) > 4 else 'N/A'
+                total_points = cells[5].get_text(strip=True) if len(cells) > 5 else '100'
+                weight = cells[6].get_text(strip=True) if len(cells) > 6 else '1.00'
+                
+                # Parse numeric values
+                earned_points = None
+                total_points_num = None
+                weight_num = 1.0
                 percentage = None
-                if score and score != 'N/A':
-                    # Try to parse "earned/total" format
-                    fraction_match = re.match(r'^([\d.]+)\s*/\s*([\d.]+)$', score)
-                    if fraction_match:
-                        earned = float(fraction_match.group(1))
-                        total = float(fraction_match.group(2))
-                        if total > 0:
-                            percentage = round((earned / total) * 100, 1)
-                    else:
-                        # Try plain number
-                        try:
-                            percentage = float(score)
-                        except ValueError:
-                            pass
+                
+                try:
+                    earned_points = float(score) if score and score != 'N/A' else None
+                except ValueError:
+                    pass
+                
+                try:
+                    total_points_num = float(total_points) if total_points else 100
+                except ValueError:
+                    total_points_num = 100
+                
+                try:
+                    weight_num = float(weight) if weight else 1.0
+                except ValueError:
+                    weight_num = 1.0
+                
+                # Calculate percentage
+                if earned_points is not None and total_points_num and total_points_num > 0:
+                    percentage = round((earned_points / total_points_num) * 100, 2)
                 
                 assignments.append({
                     'date_due': date_due,
@@ -99,8 +111,13 @@ def get_assignments_for_class_internal(cls):
                     'name': assignment_name,
                     'category': category,
                     'score': score,
+                    'earned_points': earned_points,
+                    'total_points': total_points_num,
+                    'weight': weight_num,
                     'percentage': percentage
                 })
+    
+    return assignments
     
     return assignments
 
@@ -372,6 +389,7 @@ def internal_error(e):
 
 @app.route('/')
 @app.route('/overview')
+@app.route('/what-if')
 @app.route('/gpa')
 @app.route('/report-card')
 def index():

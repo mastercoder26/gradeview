@@ -741,6 +741,185 @@
 
         .toast.success { background: #059669; }
         .toast.error { background: #dc2626; }
+
+        /* What If Section Styles */
+        .whatif-category {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .whatif-category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .whatif-category-header:hover {
+            background: #f3f4f6;
+        }
+
+        .whatif-category-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #374151;
+            letter-spacing: -0.01em;
+        }
+
+        .whatif-category-stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .whatif-category-avg {
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+            background: #e5e7eb;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .whatif-assignments {
+            padding: 8px 12px 12px;
+        }
+
+        .whatif-assignment {
+            display: grid;
+            grid-template-columns: 1fr 100px 100px 70px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            background: white;
+            border: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+
+        .whatif-assignment:hover {
+            background: #f3f4f6;
+        }
+
+        .whatif-assignment.modified {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+        }
+
+        .whatif-assignment.hypothetical-inline {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .whatif-assignment.hypothetical-inline:hover {
+            background: #dbeafe;
+        }
+
+        .hypothetical-name {
+            color: #1d4ed8 !important;
+        }
+
+        .hypothetical-input {
+            background: white !important;
+            border-color: #93c5fd !important;
+        }
+
+        .hypothetical-input:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+        }
+
+        .whatif-assignment-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .whatif-input {
+            padding: 8px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            background: white;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .whatif-input:focus {
+            outline: none;
+            border-color: #6b7280;
+            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.1);
+        }
+
+        .whatif-input.changed {
+            background: #fefce8;
+            border-color: #eab308;
+        }
+
+        .whatif-percentage {
+            font-weight: 500;
+            font-size: 13px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .whatif-remove-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .whatif-remove-btn:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Modal for adding hypothetical assignment */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.2s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -775,6 +954,7 @@
             <div class="brand">Grade<span>View</span></div>
             <div class="nav-links">
                 <button class="nav-tab active" data-target="overviewSection">Overview</button>
+                <button class="nav-tab" data-target="whatIfSection">What If</button>
                 <button class="nav-tab" data-target="gpaSection">GPA Simulator</button>
                 <button class="nav-tab" data-target="reportCardContainer">Report Card</button>
             </div>
@@ -906,6 +1086,52 @@
                 <div id="overallReportGPAValue" class="cumulative-value">0.00</div>
             </div>
         </section>
+
+        <!-- What If Section -->
+        <section id="whatIfSection" class="dash-section hidden">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Grade Calculator</span>
+                    <h2>What If Analysis</h2>
+                </div>
+            </div>
+            
+            <div class="whatif-intro" style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px 20px; border-radius: 10px; margin-bottom: 24px;">
+                <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.5;">Edit scores to see how changes affect your average. Add hypothetical assignments to plan ahead. <span style="color: #9ca3af;">Nothing is saved to HAC.</span></p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; font-weight: 500; color: #6b7280; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Class</label>
+                <select id="whatIfCourseSelect" onchange="loadWhatIfCourse(this.value)" style="width: 100%; max-width: 320px; padding: 10px 14px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; background: white; color: #111827;">
+                    <option value="">Select a class...</option>
+                </select>
+            </div>
+
+            <div id="whatIfContainer" class="hidden">
+                <div class="whatif-summary" style="display: flex; align-items: center; gap: 24px; padding: 20px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Current</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #111827;" id="whatIfOriginalGrade">--</div>
+                    </div>
+                    <div style="color: #d1d5db; font-size: 24px;">→</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Projected</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #111827;" id="whatIfProjectedGrade">--</div>
+                    </div>
+                    <div style="flex: 1; text-align: right;">
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Change</div>
+                        <div style="font-size: 28px; font-weight: 600;" id="whatIfGradeChange">--</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button onclick="addHypotheticalAssignment()" style="padding: 10px 16px; background: #111827; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">+ Add Assignment</button>
+                    <button onclick="resetWhatIfChanges()" style="padding: 10px 16px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">Reset</button>
+                </div>
+
+                <div id="whatIfCategoriesContainer"></div>
+            </div>
+        </section>
     </div>
 
     <script>
@@ -917,12 +1143,14 @@
         const routes = {
             '/': 'overviewSection',
             '/overview': 'overviewSection',
+            '/what-if': 'whatIfSection',
             '/gpa': 'gpaSection',
             '/report-card': 'reportCardContainer'
         };
 
         const sectionToRoute = {
             'overviewSection': '/overview',
+            'whatIfSection': '/what-if',
             'gpaSection': '/gpa',
             'reportCardContainer': '/report-card'
         };
@@ -1970,6 +2198,370 @@
                 }
             }
         }
+
+        // ===== WHAT IF CALCULATOR =====
+        let whatIfData = {
+            originalCourse: null,
+            modifiedAssignments: {},
+            hypotheticalAssignments: [],
+            categoryWeights: {}  // User-configurable weights
+        };
+
+        // Default category weights based on common LISD patterns
+        const defaultCategoryWeights = {
+            'Tests': 40,
+            'Quizzes': 20,
+            'Daily Grades': 20,
+            'Daily': 20,
+            'Homework': 10,
+            'Projects': 20,
+            'Labs': 20,
+            'Summative (Product)': 40,
+            'Formative (Process)': 30,
+            'Learning Checks': 30,
+            'AP Practice': 20,
+            'Classwork': 15,
+            'Participation': 10
+        };
+
+        function populateWhatIfCourseSelect() {
+            const select = document.getElementById('whatIfCourseSelect');
+            select.innerHTML = '<option value="">Choose a course...</option>';
+            
+            if (allGradesData && allGradesData.length > 0) {
+                allGradesData.forEach((course, index) => {
+                    const opt = document.createElement('option');
+                    opt.value = index;
+                    opt.textContent = `${course.name} (${course.grade})`;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        function loadWhatIfCourse(index) {
+            if (index === '' || index === null) {
+                document.getElementById('whatIfContainer').classList.add('hidden');
+                return;
+            }
+
+            const course = allGradesData[parseInt(index)];
+            if (!course) return;
+
+            // Store original data
+            whatIfData.originalCourse = JSON.parse(JSON.stringify(course));
+            whatIfData.modifiedAssignments = {};
+            whatIfData.hypotheticalAssignments = [];
+
+            // Initialize category weights
+            const categories = [...new Set(course.assignments.map(a => a.category))];
+            whatIfData.categoryWeights = {};
+            categories.forEach(cat => {
+                whatIfData.categoryWeights[cat] = defaultCategoryWeights[cat] || Math.floor(100 / categories.length);
+            });
+
+            document.getElementById('whatIfContainer').classList.remove('hidden');
+            renderWhatIfCourse(course);
+            calculateWhatIfGrade();
+        }
+
+        function renderWhatIfCourse(course) {
+            const container = document.getElementById('whatIfCategoriesContainer');
+            
+            // Group assignments by category
+            const categories = {};
+            course.assignments.forEach((assignment, idx) => {
+                const cat = assignment.category || 'Uncategorized';
+                if (!categories[cat]) {
+                    categories[cat] = [];
+                }
+                categories[cat].push({ ...assignment, originalIndex: idx, isHypothetical: false });
+            });
+
+            // Add hypothetical assignments to their respective categories
+            whatIfData.hypotheticalAssignments.forEach((hyp, idx) => {
+                const cat = hyp.category || 'Uncategorized';
+                if (!categories[cat]) {
+                    categories[cat] = [];
+                }
+                categories[cat].push({ ...hyp, hypIndex: idx, isHypothetical: true });
+            });
+
+            let html = '';
+            
+            // Render each category
+            Object.entries(categories).forEach(([catName, assignments]) => {
+                html += `
+                    <div class="whatif-category" data-category="${catName}">
+                        <div class="whatif-category-header" onclick="toggleWhatIfCategory(this)">
+                            <div class="whatif-category-name">${catName}</div>
+                            <div class="whatif-category-stats">
+                                <span class="whatif-category-avg" id="cat-avg-${catName.replace(/\s/g, '-')}">--</span>
+                            </div>
+                        </div>
+                        <div class="whatif-assignments" style="display: block;">
+                            <div style="display: grid; grid-template-columns: 1fr 100px 100px 70px; gap: 10px; padding: 6px 12px; font-size: 11px; color: #9ca3af; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em;">
+                                <span>Assignment</span>
+                                <span style="text-align: center;">Earned</span>
+                                <span style="text-align: center;">Total</span>
+                                <span style="text-align: center;">%</span>
+                            </div>
+                `;
+
+                assignments.forEach((assignment) => {
+                    if (assignment.isHypothetical) {
+                        // Render hypothetical assignment (blue style)
+                        const hyp = assignment;
+                        const pct = hyp.total > 0 ? ((hyp.earned / hyp.total) * 100).toFixed(1) : '--';
+                        html += `
+                            <div class="whatif-assignment hypothetical-inline" data-hyp-idx="${hyp.hypIndex}">
+                                <div class="whatif-assignment-name hypothetical-name" title="${hyp.name}">
+                                    ${hyp.name}
+                                </div>
+                                <input type="number" class="whatif-input hypothetical-input" 
+                                       value="${hyp.earned}" step="0.1" 
+                                       onchange="updateHypothetical(${hyp.hypIndex}, 'earned', this.value)"
+                                       onfocus="this.select()">
+                                <input type="number" class="whatif-input hypothetical-input" 
+                                       value="${hyp.total}" step="0.1" 
+                                       onchange="updateHypothetical(${hyp.hypIndex}, 'total', this.value)"
+                                       onfocus="this.select()">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="whatif-percentage" style="color: #2563eb;">${pct}%</span>
+                                    <button class="whatif-remove-btn" onclick="removeHypothetical(${hyp.hypIndex})" title="Remove">×</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Render real assignment
+                        const isModified = whatIfData.modifiedAssignments[assignment.originalIndex] !== undefined;
+                        const earned = isModified ? whatIfData.modifiedAssignments[assignment.originalIndex].earned : (assignment.earned_points || 0);
+                        const total = isModified ? whatIfData.modifiedAssignments[assignment.originalIndex].total : (assignment.total_points || 100);
+                        const pct = total > 0 ? ((earned / total) * 100).toFixed(1) : '--';
+                        
+                        html += `
+                            <div class="whatif-assignment ${isModified ? 'modified' : ''}" data-idx="${assignment.originalIndex}">
+                                <div class="whatif-assignment-name" title="${assignment.name}">${assignment.name}</div>
+                                <input type="number" class="whatif-input ${isModified ? 'changed' : ''}" 
+                                       value="${earned}" step="0.1" 
+                                       onchange="updateWhatIfAssignment(${assignment.originalIndex}, 'earned', this.value)"
+                                       onfocus="this.select()">
+                                <input type="number" class="whatif-input" 
+                                       value="${total}" step="0.1" 
+                                       onchange="updateWhatIfAssignment(${assignment.originalIndex}, 'total', this.value)"
+                                       onfocus="this.select()">
+                                <div class="whatif-percentage">${pct}%</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += '</div></div>';
+            });
+
+            container.innerHTML = html;
+            updateCategoryAverages();
+        }
+
+        function toggleWhatIfCategory(header) {
+            const assignments = header.nextElementSibling;
+            assignments.style.display = assignments.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateWhatIfAssignment(idx, field, value) {
+            const original = whatIfData.originalCourse.assignments[idx];
+            
+            if (!whatIfData.modifiedAssignments[idx]) {
+                whatIfData.modifiedAssignments[idx] = {
+                    earned: original.earned_points || 0,
+                    total: original.total_points || 100
+                };
+            }
+            
+            whatIfData.modifiedAssignments[idx][field] = parseFloat(value) || 0;
+            
+            // Check if back to original
+            const mod = whatIfData.modifiedAssignments[idx];
+            if (mod.earned === (original.earned_points || 0) && mod.total === (original.total_points || 100)) {
+                delete whatIfData.modifiedAssignments[idx];
+            }
+            
+            calculateWhatIfGrade();
+            renderWhatIfCourse(whatIfData.originalCourse);
+        }
+
+        function updateCategoryWeight(category, value) {
+            whatIfData.categoryWeights[category] = parseFloat(value) || 0;
+            calculateWhatIfGrade();
+        }
+
+        function updateCategoryAverages() {
+            const course = whatIfData.originalCourse;
+            if (!course) return;
+
+            const categories = {};
+            course.assignments.forEach((assignment, idx) => {
+                const cat = assignment.category || 'Uncategorized';
+                if (!categories[cat]) {
+                    categories[cat] = { earned: 0, total: 0 };
+                }
+                
+                const mod = whatIfData.modifiedAssignments[idx];
+                const earned = mod ? mod.earned : (assignment.earned_points || 0);
+                const total = mod ? mod.total : (assignment.total_points || 100);
+                
+                categories[cat].earned += earned;
+                categories[cat].total += total;
+            });
+
+            // Update category average displays
+            Object.entries(categories).forEach(([catName, data]) => {
+                const avg = data.total > 0 ? ((data.earned / data.total) * 100).toFixed(1) : '--';
+                const elem = document.getElementById(`cat-avg-${catName.replace(/\s/g, '-')}`);
+                if (elem) elem.textContent = `${avg}%`;
+            });
+        }
+
+        function calculateWhatIfGrade() {
+            const course = whatIfData.originalCourse;
+            if (!course) return;
+
+            // Check if user has made any modifications or added hypotheticals
+            const hasModifications = Object.keys(whatIfData.modifiedAssignments).length > 0;
+            const hasHypotheticals = whatIfData.hypotheticalAssignments.length > 0;
+
+            // Calculate total points (simple method - matches HAC's default)
+            let totalEarned = 0;
+            let totalPossible = 0;
+            
+            // Add regular assignments
+            course.assignments.forEach((assignment, idx) => {
+                const mod = whatIfData.modifiedAssignments[idx];
+                const earned = mod ? mod.earned : (assignment.earned_points || 0);
+                const total = mod ? mod.total : (assignment.total_points || 100);
+                
+                totalEarned += earned;
+                totalPossible += total;
+            });
+
+            // Add hypothetical assignments
+            whatIfData.hypotheticalAssignments.forEach(hyp => {
+                totalEarned += hyp.earned;
+                totalPossible += hyp.total;
+            });
+
+            // Simple points-based average
+            const projectedGrade = totalPossible > 0 ? (totalEarned / totalPossible) * 100 : 0;
+            
+            // Original grade from HAC
+            const originalGrade = course.numeric_grade || 0;
+            
+            // Only show change if modifications were made
+            const change = (hasModifications || hasHypotheticals) ? projectedGrade - originalGrade : 0;
+            const displayProjected = (hasModifications || hasHypotheticals) ? projectedGrade : originalGrade;
+
+            // Update display
+            document.getElementById('whatIfOriginalGrade').textContent = `${originalGrade.toFixed(2)}%`;
+            document.getElementById('whatIfProjectedGrade').textContent = `${displayProjected.toFixed(2)}%`;
+            
+            const changeElem = document.getElementById('whatIfGradeChange');
+            if (hasModifications || hasHypotheticals) {
+                const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
+                changeElem.textContent = changeText;
+                changeElem.style.color = change >= 0 ? '#10b981' : '#ef4444';
+            } else {
+                changeElem.textContent = '--';
+                changeElem.style.color = 'var(--text-muted)';
+            }
+
+            updateCategoryAverages();
+        }
+
+        function resetWhatIfChanges() {
+            whatIfData.modifiedAssignments = {};
+            whatIfData.hypotheticalAssignments = [];
+            renderWhatIfCourse(whatIfData.originalCourse);
+            calculateWhatIfGrade();
+        }
+
+        function addHypotheticalAssignment() {
+            const course = whatIfData.originalCourse;
+            if (!course) return;
+
+            const categories = [...new Set(course.assignments.map(a => a.category))];
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #111827;">Add Assignment</h3>
+                    <div class="input-group">
+                        <label style="font-size: 13px; color: #6b7280;">Name</label>
+                        <input type="text" id="hypName" placeholder="e.g., Unit Test" value="New Assignment" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div class="input-group">
+                        <label style="font-size: 13px; color: #6b7280;">Category</label>
+                        <select id="hypCategory" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
+                            ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="input-group">
+                            <label style="font-size: 13px; color: #6b7280;">Points Earned</label>
+                            <input type="number" id="hypEarned" value="90" step="0.1" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div class="input-group">
+                            <label style="font-size: 13px; color: #6b7280;">Total Points</label>
+                            <input type="number" id="hypTotal" value="100" step="0.1" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button onclick="confirmAddHypothetical()" style="flex: 1; padding: 10px 16px; background: #111827; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Add</button>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 10px 16px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.getElementById('hypName').focus();
+        }
+
+        function confirmAddHypothetical() {
+            const name = document.getElementById('hypName').value || 'New Assignment';
+            const category = document.getElementById('hypCategory').value;
+            const earned = parseFloat(document.getElementById('hypEarned').value) || 0;
+            const total = parseFloat(document.getElementById('hypTotal').value) || 100;
+
+            whatIfData.hypotheticalAssignments.push({ name, category, earned, total });
+            
+            document.querySelector('.modal-overlay').remove();
+            renderWhatIfCourse(whatIfData.originalCourse);
+            calculateWhatIfGrade();
+        }
+
+        function updateHypothetical(idx, field, value) {
+            if (field === 'earned' || field === 'total') {
+                whatIfData.hypotheticalAssignments[idx][field] = parseFloat(value) || 0;
+            } else {
+                whatIfData.hypotheticalAssignments[idx][field] = value;
+            }
+            calculateWhatIfGrade();
+        }
+
+        function removeHypothetical(idx) {
+            whatIfData.hypotheticalAssignments.splice(idx, 1);
+            renderWhatIfCourse(whatIfData.originalCourse);
+            calculateWhatIfGrade();
+        }
+
+        // Populate What If dropdown when grades load
+        const originalUpdateUIWithGradesData = updateUIWithGradesData;
+        updateUIWithGradesData = function(data) {
+            originalUpdateUIWithGradesData(data);
+            populateWhatIfCourseSelect();
+        };
     </script>
 </body>
 </html>

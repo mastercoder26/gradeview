@@ -76,12 +76,30 @@ def get_assignments_for_class_internal(cls):
                 category = cells[3].get_text(strip=True)
                 score = cells[4].get_text(strip=True) if len(cells) > 4 else 'N/A'
                 
+                # Calculate percentage for the score if possible
+                percentage = None
+                if score and score != 'N/A':
+                    # Try to parse "earned/total" format
+                    fraction_match = re.match(r'^([\d.]+)\s*/\s*([\d.]+)$', score)
+                    if fraction_match:
+                        earned = float(fraction_match.group(1))
+                        total = float(fraction_match.group(2))
+                        if total > 0:
+                            percentage = round((earned / total) * 100, 1)
+                    else:
+                        # Try plain number
+                        try:
+                            percentage = float(score)
+                        except ValueError:
+                            pass
+                
                 assignments.append({
                     'date_due': date_due,
                     'date_assigned': date_assigned,
                     'name': assignment_name,
                     'category': category,
-                    'score': score
+                    'score': score,
+                    'percentage': percentage
                 })
     
     return assignments

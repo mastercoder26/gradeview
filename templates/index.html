@@ -320,16 +320,42 @@
             padding: 24px;
             box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
-            border: 1px solid transparent;
+            border: 1px solid var(--border);
             cursor: pointer;
             /* Default state for animation */
             animation: cardPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
 
         .course-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
-            border-color: var(--border);
+            border-color: var(--accent);
+        }
+
+        .course-card:hover::before {
+            opacity: 1;
+        }
+
+        .course-card.expanded {
+            border-color: var(--accent);
+        }
+
+        .course-card.expanded::before {
+            opacity: 1;
         }
 
         .course-header {
@@ -351,8 +377,30 @@
             font-weight: 700;
             color: var(--accent);
             background: #f0f4ff;
-            padding: 4px 12px;
-            border-radius: 8px;
+            padding: 6px 14px;
+            border-radius: 10px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .course-grade.grade-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .course-grade.grade-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .course-grade.grade-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .course-grade.grade-danger {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         /* Assignments */
@@ -361,27 +409,108 @@
             padding-top: 20px;
             border-top: 1px solid var(--border);
             display: none;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .assignments.show {
             display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 400px; }
+        }
+
+        .assignments::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .assignments::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .assignments::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .assignments::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
 
         .assignment-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            align-items: center;
+            padding: 14px 12px;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: background 0.15s ease;
+        }
+
+        .assignment-item:hover {
+            background: #f8fafc;
         }
 
         .assignment-item:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
 
         .assignment-score {
             font-weight: 700;
-            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .score-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .score-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .score-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .score-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .score-neutral {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .assignment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 2;
+        }
+
+        .assignment-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .assignment-category {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         /* Login Box */
@@ -541,7 +670,77 @@
             .hero-graphic { display: none; }
             .stats-row { grid-template-columns: 1fr 1fr; }
             .nav-links { display: none; } /* Simplify for mobile for now */
+            .grade-grid { grid-template-columns: 1fr; }
+            .course-card { padding: 16px; }
         }
+
+        /* Loading skeleton animation */
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 0px, #e0e0e0 50%, #f0f0f0 100%);
+            background-size: 200px 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        /* Cycle select styling */
+        #cycleSelect {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            min-width: 160px;
+        }
+
+        #cycleSelect:hover {
+            border-color: var(--accent);
+        }
+
+        #cycleSelect:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.15);
+        }
+
+        #cycleSelect:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--text-main);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            z-index: 9999;
+            animation: slideInUp 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast.success { background: #059669; }
+        .toast.error { background: #dc2626; }
     </style>
 </head>
 <body>
@@ -648,7 +847,7 @@
                         <h2>Active Courses</h2>
                     </div>
                     <div id="cycleSelectContainer" style="display: none;">
-                        <select id="cycleSelect" onchange="changeCycle(this.value)" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; background: white; color: var(--text-main); cursor: pointer;">
+                        <select id="cycleSelect" onchange="changeCycle(this.value)">
                             <option value="">Current Cycle</option>
                         </select>
                     </div>
@@ -991,22 +1190,30 @@
                 }
             }
 
-            // Check cache first
+            // Check cache first - instant response for cached data
             if (cycle && gradesCache[cycle]) {
+                console.log(`Cache hit for cycle: ${cycle}`);
                 const data = gradesCache[cycle];
-                // Delay UI update slightly to match animation peak blur/spin if caching allows instant result
-                if (cycle) {
-                    setTimeout(() => updateUIWithGradesData(data), 600);
-                } else {
+                // Quick fade animation for cached results
+                const gradesList = document.getElementById('gradesList');
+                gradesList.style.opacity = '0.5';
+                setTimeout(() => {
                     updateUIWithGradesData(data);
-                }
+                    gradesList.style.opacity = '1';
+                }, 150);
                 return;
             }
             
             let url = '/api/grades';
             if (cycle) {
                 url += `?cycle=${encodeURIComponent(cycle)}`;
-                document.getElementById('gradesList').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Fetching cycle data...</div>';
+                document.getElementById('gradesList').innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                        <div style="width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; margin: 0 auto 12px; animation: spin 1s linear infinite;"></div>
+                        <div>Loading cycle data...</div>
+                    </div>
+                    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+                `;
             }
 
             const response = await fetchWithAuth(url);
@@ -1074,44 +1281,56 @@
         }
         
         async function startPrefetching(allCycles, currentCycle) {
-            // ... strict ordered prefetch logic optimized out in favor of backend global refresh if needed, 
-            // but kept for initial load smoothness individually . 
-            // We'll keep the existing logic as fallback.
+            console.log("Starting optimized background prefetch. Current:", currentCycle);
             
-            console.log("Starting background prefetch. Current:", currentCycle);
-            // ... (rest of prefetch logic similar to before but minimal changes needed)
-             const sortedCycles = [...allCycles].sort((a, b) => {
+            const sortedCycles = [...allCycles].sort((a, b) => {
                 const getNum = (str) => parseInt((str.match(/\d+/) || ['0'])[0], 10);
-                return getNum(a.text) - getNum(b.text);
+                return getNum(b.text) - getNum(a.text); // Most recent first
             });
 
             prefetchQueue = sortedCycles
                 .map(c => c.value)
                 .filter(val => val !== currentCycle && !gradesCache[val]);
             
-            if (!isPrefetching) {
+            if (!isPrefetching && prefetchQueue.length > 0) {
                 isPrefetching = true;
-                await processPrefetchQueue();
+                // Batch prefetch: fetch 2 cycles in parallel for speed
+                await processPrefetchBatch();
             }
         }
         
-        async function processPrefetchQueue() {
+        async function processPrefetchBatch() {
             if (prefetchQueue.length === 0) {
                 isPrefetching = false;
+                console.log("Background prefetch complete. Cached cycles:", Object.keys(gradesCache));
                 return;
             }
-            const nextCycle = prefetchQueue.shift();
-            if (gradesCache[nextCycle]) return processPrefetchQueue();
-
-            try {
-                 const url = `/api/grades?cycle=${encodeURIComponent(nextCycle)}`;
-                 const response = await fetchWithAuth(url);
-                 if (response.ok) {
-                     const data = await response.json();
-                     if (data.grades) gradesCache[nextCycle] = data;
-                 }
-            } catch (err) { console.error(err); }
-            return processPrefetchQueue();
+            
+            // Fetch up to 2 cycles in parallel
+            const batch = prefetchQueue.splice(0, 2);
+            const promises = batch.map(async (cycleVal) => {
+                if (gradesCache[cycleVal]) return;
+                try {
+                    const url = `/api/grades?cycle=${encodeURIComponent(cycleVal)}`;
+                    const response = await fetchWithAuth(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.grades) {
+                            gradesCache[cycleVal] = data;
+                            console.log(`Prefetched cycle: ${cycleVal}`);
+                        }
+                    }
+                } catch (err) { 
+                    console.error(`Failed to prefetch ${cycleVal}:`, err); 
+                }
+            });
+            
+            await Promise.all(promises);
+            
+            // Small delay to prevent hammering the server
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            return processPrefetchBatch();
         }
 
         async function changeCycle(cycle) {
@@ -1151,22 +1370,39 @@
             }
         }
 
+        function getGradeClass(numericGrade) {
+            if (numericGrade === null || numericGrade === undefined) return '';
+            if (numericGrade >= 90) return 'grade-excellent';
+            if (numericGrade >= 80) return 'grade-good';
+            if (numericGrade >= 70) return 'grade-warning';
+            return 'grade-danger';
+        }
+
         function displayGrades(grades) {
             const gradesList = document.getElementById('gradesList');
             gradesList.innerHTML = '';
             grades.forEach((course, index) => {
                 const card = document.createElement('div');
                 card.className = 'course-card';
+                card.id = `course-card-${index}`;
                 card.style.animationDelay = `${index * 60}ms`; // Stagger effect
                 card.onclick = () => toggleAssignments(index);
+                
+                const gradeClass = getGradeClass(course.numeric_grade);
                 const gpaDisplay = course.gpa ? `<span style="color: var(--text-muted); font-size: 14px; font-weight: 500;">GPA ${course.gpa}</span>` : '';
+                const assignmentCount = course.assignments ? course.assignments.length : 0;
+                const assignmentBadge = assignmentCount > 0 ? `<span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">${assignmentCount} assignments</span>` : '';
+                
                 card.innerHTML = `
                     <div class="course-header">
-                        <div>
+                        <div style="flex: 1;">
                             <div class="course-name">${course.name}</div>
-                            ${gpaDisplay}
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                ${gpaDisplay}
+                                ${assignmentBadge}
+                            </div>
                         </div>
-                        <div class="course-grade">${course.grade}</div>
+                        <div class="course-grade ${gradeClass}">${course.grade}</div>
                     </div>
                     <div id="assignments-${index}" class="assignments"></div>
                 `;
@@ -1176,41 +1412,95 @@
 
         function toggleAssignments(index) {
             const assignmentsDiv = document.getElementById(`assignments-${index}`);
+            const card = document.getElementById(`course-card-${index}`);
             if (!assignmentsDiv) return;
+            
+            // Close all other expanded cards first
+            document.querySelectorAll('.course-card.expanded').forEach(c => {
+                if (c.id !== `course-card-${index}`) {
+                    c.classList.remove('expanded');
+                    const otherAssignments = c.querySelector('.assignments');
+                    if (otherAssignments) otherAssignments.classList.remove('show');
+                }
+            });
+            
             assignmentsDiv.classList.toggle('show');
+            card.classList.toggle('expanded');
+            
             if (assignmentsDiv.classList.contains('show')) {
                 const course = allGradesData[index] || {};
                 const assignmentList = Array.isArray(course.assignments) ? course.assignments : [];
                 displayAssignments(assignmentList, index);
+                
+                // Smooth scroll to card
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
             }
+        }
+
+        // Parse score and return percentage (handles "30/40", "85", "85%", etc.)
+        function parseScoreToPercentage(scoreStr) {
+            if (!scoreStr || scoreStr === 'N/A' || scoreStr === '--' || scoreStr.trim() === '') {
+                return null;
+            }
+            
+            scoreStr = scoreStr.trim();
+            
+            // Handle fraction format: "30/40" or "30 / 40"
+            const fractionMatch = scoreStr.match(/^([\d.]+)\s*\/\s*([\d.]+)$/);
+            if (fractionMatch) {
+                const earned = parseFloat(fractionMatch[1]);
+                const total = parseFloat(fractionMatch[2]);
+                if (!isNaN(earned) && !isNaN(total) && total > 0) {
+                    return (earned / total) * 100;
+                }
+            }
+            
+            // Handle percentage format: "85%"
+            const percentMatch = scoreStr.match(/^([\d.]+)\s*%$/);
+            if (percentMatch) {
+                return parseFloat(percentMatch[1]);
+            }
+            
+            // Handle plain number (assume it's a percentage out of 100)
+            const plainNum = parseFloat(scoreStr);
+            if (!isNaN(plainNum)) {
+                return plainNum;
+            }
+            
+            return null;
+        }
+
+        // Get score class based on percentage
+        function getScoreClass(percentage) {
+            if (percentage === null) return 'score-neutral';
+            if (percentage >= 90) return 'score-excellent';
+            if (percentage >= 80) return 'score-good';
+            if (percentage >= 70) return 'score-warning';
+            return 'score-danger';
         }
 
         function displayAssignments(assignments, index) {
             const assignmentsDiv = document.getElementById(`assignments-${index}`);
             if (assignments.length === 0) {
-                assignmentsDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;">No assignments found</div>';
+                assignmentsDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 14px; padding: 12px; text-align: center;">No assignments found</div>';
                 return;
             }
             let html = '';
             assignments.forEach(assignment => {
-                let scoreColor = 'var(--text-main)';
-                const scoreVal = parseFloat(assignment.score);
+                const percentage = parseScoreToPercentage(assignment.score);
+                const scoreClass = getScoreClass(percentage);
+                const percentDisplay = percentage !== null ? `${percentage.toFixed(0)}%` : '';
                 
-                if (!isNaN(scoreVal)) {
-                    if (scoreVal > 95) {
-                        scoreColor = '#10b981'; // Green
-                    } else if (scoreVal > 80) {
-                        scoreColor = '#0570de'; // Blue
-                    } else {
-                        scoreColor = 'var(--danger)'; // Red
-                    }
-                }
-
                 html += `
                     <div class="assignment-item">
-                        <div style="flex: 1; color: var(--text-muted);">${assignment.date_due}</div>
-                        <div style="flex: 2; font-weight: 500;">${assignment.name}</div>
-                        <div class="assignment-score" style="color: ${scoreColor}">${assignment.score}</div>
+                        <div style="flex: 0 0 80px; color: var(--text-muted); font-size: 13px;">${assignment.date_due}</div>
+                        <div class="assignment-info">
+                            <span class="assignment-name">${assignment.name}</span>
+                            <span class="assignment-category">${assignment.category || ''}</span>
+                        </div>
+                        <div class="assignment-score ${scoreClass}" title="${percentDisplay}">${assignment.score}</div>
                     </div>
                 `;
             });

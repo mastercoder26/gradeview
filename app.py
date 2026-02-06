@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
@@ -7,6 +7,7 @@ import secrets
 import traceback
 import random
 from datetime import datetime, timedelta
+import os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -394,6 +395,10 @@ def internal_error(e):
 @app.route('/report-card')
 def index():
     return render_template('index.html')
+
+@app.route('/image.png')
+def serve_logo():
+    return send_from_directory('.', 'image.png')
 
 @app.route('/api/login', methods=['POST'])
 def login():

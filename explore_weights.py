@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -11,10 +12,16 @@ def login():
     response = sess.get(login_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
+    username = os.getenv('HAC_USERNAME')
+    password = os.getenv('HAC_PASSWORD')
+    if not username or not password:
+        print('Missing HAC_USERNAME or HAC_PASSWORD environment variables')
+        return None
+
     login_data = {
         'Database': '10',
-        'LogOnDetails.UserName': 'akhil.konduru91@k12.leanderisd.org',
-        'LogOnDetails.Password': 'Wellington123!'
+        'LogOnDetails.UserName': username,
+        'LogOnDetails.Password': password
     }
     
     login_form = soup.find('form')

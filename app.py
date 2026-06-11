@@ -13,6 +13,46 @@ app.secret_key = secrets.token_hex(16)
 CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"], supports_credentials=True)
 
 BASE_URL = "https://lis-hac.eschoolplus.powerschool.com"
+RANKS_STATUS_URL = "https://sandeepshenoy.dev/ranks/check.php"
+
+def get_rank_release_status():
+    try:
+        response = requests.get(RANKS_STATUS_URL, timeout=10)
+        response.raise_for_status()
+        payload = response.json()
+    except requests.RequestException as error:
+        return {
+            'status': 'error',
+            'message': 'Failed to reach the rank checker.',
+            'error': str(error),
+        }
+    except ValueError as error:
+        return {
+            'status': 'error',
+            'message': 'Rank checker returned invalid JSON.',
+            'error': str(error),
+        }
+
+    remote_status = payload.get('status')
+    gpa = payload.get('gpa')
+
+    if remote_status == 'out':
+        message = 'Ranks are out!'
+        status = 'out'
+    elif remote_status == 'not_out':
+        message = 'Ranks are not out.'
+        status = 'not_out'
+    else:
+        message = 'Rank checker returned an unknown status.'
+        status = 'unknown'
+
+    return {
+        'status': status,
+        'message': message,
+        'gpa': gpa,
+        'source_status': remote_status,
+        'checked_at': datetime.utcnow().isoformat() + 'Z',
+    }
 
 def create_session_and_login(username, password):
     sess = requests.Session()
@@ -395,6 +435,11 @@ def internal_error(e):
 def index():
     return render_template('index.html')
 
+@app.route('/ranks')
+@app.route('/ranks/')
+def ranks():
+    return render_template('ranks.html')
+
 @app.route('/api/login', methods=['POST'])
 def login():
     try:
@@ -702,6 +747,13 @@ def report_card():
         print(f"Report card error: {str(e)}")
         print(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ranks-status', methods=['GET'])
+def ranks_status():
+    status = get_rank_release_status()
+    if status['status'] == 'error':
+        return jsonify(status), 502
+    return jsonify(status)
 
 @app.route('/api/refresh_all_cycles', methods=['POST'])
 def refresh_all_cycles():

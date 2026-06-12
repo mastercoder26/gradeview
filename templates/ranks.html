@@ -1,125 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rank Status Checker</title>
-    <style>
-        :root {
-            color-scheme: dark;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #34495e;
-            color: #fff;
-            transition: background-color 0.35s ease;
-        }
-
-        .main-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: clamp(2.4rem, 6vw, 4rem);
-            line-height: 1.05;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .meta {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 16px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 12px;
-            opacity: 0.9;
-            padding: 0 16px;
-        }
-
-        .status-card {
-            margin-top: 24px;
-            padding: 16px 20px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            display: inline-block;
-        }
-
-        .status-text {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .status-subtext {
-            margin-top: 6px;
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-    </style>
-</head>
-<body>
-    <main class="main-container">
-        <div>
-            <h1 id="status-message">Checking Rank Release Status...</h1>
-            <div class="status-card">
-                <div class="status-text" id="status-detail">Loading...</div>
-                <div class="status-subtext">Detected GPA: <span id="debug-gpa-val">Loading...</span></div>
-            </div>
-        </div>
-    </main>
-
-    <div class="meta" id="checked-at"></div>
-
-    <script>
-        async function fetchStatus() {
-            const messageElement = document.getElementById('status-message');
-            const detailElement = document.getElementById('status-detail');
-            const gpaElement = document.getElementById('debug-gpa-val');
-            const checkedAtElement = document.getElementById('checked-at');
-
-            try {
-                const response = await fetch('/api/ranks-status');
-                const data = await response.json();
-
-                gpaElement.textContent = data.gpa || 'Loading...';
-                checkedAtElement.textContent = data.checked_at ? `Last checked: ${new Date(data.checked_at).toLocaleString()}` : '';
-
-                if (data.status === 'out') {
-                    document.body.style.backgroundColor = '#2ecc71';
-                    messageElement.textContent = 'Ranks are out!';
-                    detailElement.textContent = 'The site says ranks are out.';
-                } else if (data.status === 'not_out') {
-                    document.body.style.backgroundColor = '#e74c3c';
-                    messageElement.textContent = 'Ranks are not out.';
-                    detailElement.textContent = 'The site says ranks are still pending.';
-                } else {
-                    document.body.style.backgroundColor = '#f1c40f';
-                    messageElement.textContent = 'Request failed.';
-                    detailElement.textContent = data.message || 'Unknown response.';
-                }
-            } catch (error) {
-                document.body.style.backgroundColor = '#f1c40f';
-                messageElement.textContent = 'Request failed.';
-                detailElement.textContent = 'Unable to load rank status.';
-                gpaElement.textContent = 'Error';
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rank Status Checker</title>
+        <style>
+            :root {
+                color-scheme: dark;
             }
-        }
 
-        fetchStatus();
-    </script>
-</body>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+                background: #1e293b;
+                color: #fff;
+                transition: background-color 0.4s ease;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .main-container {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+                text-align: center;
+            }
+
+            h1 {
+                margin: 0;
+                font-size: clamp(2.4rem, 6vw, 4rem);
+                line-height: 1.1;
+                font-weight: 800;
+                letter-spacing: -1px;
+                text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .meta {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 16px;
+                text-align: center;
+                font-family: monospace;
+                font-size: 12px;
+                opacity: 0.9;
+                padding: 0 16px;
+            }
+
+            .status-card {
+                margin-top: 32px;
+                padding: 20px 24px;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(12px);
+                display: inline-block;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+            .status-text {
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .status-subtext {
+                margin-top: 6px;
+                font-size: 0.95rem;
+                opacity: 0.9;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="main-container">
+            <div>
+                <h1 id="status-message">Checking Rank Release Status...</h1>
+                <div class="status-card">
+                    <div class="status-text" id="status-detail">Loading...</div>
+                    <div class="status-subtext">
+                        Detected GPA: <span id="debug-gpa-val">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="meta" id="checked-at"></div>
+
+        <script>
+            async function fetchStatus() {
+                const messageElement =
+                    document.getElementById("status-message");
+                const detailElement = document.getElementById("status-detail");
+                const gpaElement = document.getElementById("debug-gpa-val");
+                const checkedAtElement = document.getElementById("checked-at");
+
+                try {
+                    const response = await fetch("/api/ranks-status");
+                    const data = await response.json();
+
+                    gpaElement.textContent = data.gpa || "Loading...";
+                    checkedAtElement.textContent = data.checked_at
+                        ? `Last checked: ${new Date(data.checked_at).toLocaleString()}`
+                        : "";
+
+                    if (data.status === "out") {
+                        document.body.style.backgroundColor = "#10b981";
+                        messageElement.textContent = "Ranks are out!";
+                        detailElement.textContent =
+                            "The site says ranks are out.";
+                    } else if (data.status === "not_out") {
+                        document.body.style.backgroundColor = "#ef4444";
+                        messageElement.textContent = "Ranks are not out.";
+                        detailElement.textContent =
+                            "The site says ranks are still pending.";
+                    } else {
+                        document.body.style.backgroundColor = "#f59e0b";
+                        messageElement.textContent = "Request failed.";
+                        detailElement.textContent =
+                            data.message || "Unknown response.";
+                    }
+                } catch (error) {
+                    document.body.style.backgroundColor = "#f59e0b";
+                    messageElement.textContent = "Request failed.";
+                    detailElement.textContent = "Unable to load rank status.";
+                    gpaElement.textContent = "Error";
+                }
+            }
+
+            fetchStatus();
+        </script>
+    </body>
 </html>

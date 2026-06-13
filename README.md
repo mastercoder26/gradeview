@@ -1,3 +1,5 @@
+ [![Deployed on Vercel](https://img.shields.io/badge/deployed%20on-Vercel-000000)](https://vercel.com)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # GradeView
 
 GradeView is a small Flask app for checking school grades, GPA, assignments, report card cycles, and rank release status from the browser. It takes your existing HAC login and fetches your data for you, calculating your GPA and other good-to-know stats along the way!

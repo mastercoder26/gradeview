@@ -1,6 +1,7 @@
 # GradeView
 
-GradeView is a small Flask app for checking school grades, GPA, assignments, report card cycles, and rank release status from the browser.
+GradeView is a small Flask app for checking school grades, GPA, assignments, report card cycles, and rank release status from the browser. It takes your existing HAC login and fetches your data for you, calculating your GPA and other good-to-know stats along the way!
+If you want to see a demo of it, login wih username: admin1, password: admin1. Enjoy!
 
 ## How it works
 
@@ -15,6 +16,8 @@ GradeView is a small Flask app for checking school grades, GPA, assignments, rep
 - Login state is kept only in memory and expires after a short time.
 - The interface runs in your browser, and the app only uses your session while it is open.
 
+## AI Usage
+AI was used sparingly in this project. It was used to assist with front end design, but the calculations and everything going on in the background was done by me.
 ## Run it locally
 
 ```bash
